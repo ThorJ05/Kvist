@@ -1,24 +1,59 @@
-import { APITester } from "./APITester";
-import "./index.css";
+import { useState } from 'react';
 
-import logo from "./logo.svg";
-import reactLogo from "./react.svg";
+export default function App() {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
 
-export function App() {
-  return (
-    <div className="app">
-      <div className="logo-container">
-        <img src={logo} alt="Bun Logo" className="logo bun-logo" />
-        <img src={reactLogo} alt="React Logo" className="logo react-logo" />
-      </div>
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-      <h1>Bun + React</h1>
-      <p>
-        Edit <code>src/App.tsx</code> and save to test HMR
-      </p>
-      <APITester />
-    </div>
-  );
+        try {
+            const response = await fetch('http://localhost:5244/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (response.ok) {
+                setMessage('Login successful!');
+            } else {
+                setMessage('Invalid username or password.');
+            }
+        } catch (error) {
+            setMessage('Error connecting to the server. Is the API running?');
+        }
+    };
+
+    return (
+        <div style={{ maxWidth: '300px', margin: '50px auto', fontFamily: 'sans-serif' }}>
+            <h2>Login</h2>
+            <form onSubmit={handleLogin}>
+                <div style={{ marginBottom: '10px' }}>
+                    <label>Username: </label>
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                        style={{ width: '100%', padding: '8px' }}
+                    />
+                </div>
+                <div style={{ marginBottom: '10px' }}>
+                    <label>Password: </label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        style={{ width: '100%', padding: '8px' }}
+                    />
+                </div>
+                <button type="submit" style={{ width: '100%', padding: '10px', cursor: 'pointer' }}>
+                    Login
+                </button>
+            </form>
+            {message && <p style={{ marginTop: '15px', fontWeight: 'bold' }}>{message}</p>}
+        </div>
+    );
 }
-
-export default App;
