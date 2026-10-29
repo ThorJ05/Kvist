@@ -27,7 +27,7 @@ USE OF AI SO FAR
 
 We used AI assitance like claude, Copilot and deepseek.
 
-Code: Drafting part of AuthController.cs and UserController.cs.
+We used it here(code): Drafting part of AuthController.cs and UserController.cs.
 
 
 
