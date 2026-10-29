@@ -9,11 +9,11 @@ namespace API.Controllers;
 
 /// <summary>
 /// Rettigheder:
-///   User      : kan kun læse brugere
-///   SuperUser : kan oprette, læse, opdatere og slette brugere med rollen User
-///   Admin     : kan oprette, læse, opdatere og slette alle (User, SuperUser, Admin)
-/// [Authorize(Roles = ...)] styrer hvilke endpoints man kan kalde.
-/// Hvem man må ændre (SuperUser må ikke røre SuperUser/Admin) tjekkes i koden nedenfor.
+///   User: Can only read users
+///   SuperUser: Can CRUD users with the role "user".
+///   Admin: can CRUD all users even admins.
+/// [Authorize(Roles = ...)] Controls what endpoints can get called.
+/// Who can they change (SuperUser can't change other SuperUsers or admins) This gets chacked in the code down below.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -29,7 +29,7 @@ public class UsersController : ControllerBase
         _userManager = userManager;
     }
 
-    // ---------- Hjælpefunktioner til rolleregler ----------
+    // Help funtions for roles
 
     private static int Rank(IEnumerable<string> roles) =>
         roles.Select(r => r switch { "Admin" => 3, "SuperUser" => 2, "User" => 1, _ => 0 })
@@ -38,17 +38,17 @@ public class UsersController : ControllerBase
     private int CallerRank => Rank(User.FindAll(ClaimTypes.Role).Select(c => c.Value));
     private string? CallerId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    // Admin må ændre alle. SuperUser må kun ændre brugere med rollen User.
+    // Admins can change everything and SuperUsers can change users only.
     private static bool CanManage(int callerRank, int targetRank) =>
         callerRank == 3 || (callerRank == 2 && targetRank <= 1);
 
-    // Admin må tildele alle roller. SuperUser må kun tildele User.
+    // Admin can give all roles and SuperUsers can only give User.
     private static bool CanAssign(int callerRank, string role) =>
         callerRank == 3 ? AllRoles.Contains(role) : callerRank == 2 && role == UserRole;
 
     private ObjectResult Forbidden(string message) => StatusCode(StatusCodes.Status403Forbidden, message);
 
-    // ---------- Endpoints ----------
+    // Endpoints
 
     [HttpGet]
     [Authorize(Roles = "User,SuperUser,Admin")]
@@ -96,7 +96,7 @@ public class UsersController : ControllerBase
         if (!CanManage(callerRank, Rank(targetRoles)))
             return Forbidden("You are not allowed to modify this user.");
 
-        // Valider rolleændring før noget gemmes
+        // Validation for when something gets saved.
         var changeRole = dto.Role != null && !targetRoles.Contains(dto.Role);
         if (changeRole)
         {

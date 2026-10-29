@@ -27,8 +27,8 @@ public class AuthController : ControllerBase
         _config = config;
     }
 
-    // Selvregistrering giver ALTID rollen "User". Brugeren kan ikke vælge rolle selv.
-    // Fjern dette endpoint, hvis kun SuperUser/Admin skal kunne oprette brugere.
+    // Regitration allways gives the role "User". The user can't change its role.
+    // Remove this endpoint, if only SuperUser/Admin can create a user.
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
@@ -49,7 +49,7 @@ public class AuthController : ControllerBase
         if (user == null)
             return Unauthorized("Invalid username or password.");
 
-        // lockoutOnFailure: true => konto låses efter for mange forkerte forsøg (brute force-beskyttelse)
+        // lockoutOnFailure: true => Account gets locked if too many attemps have been used. (brute force-protection)
         var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: true);
 
         if (result.IsLockedOut)

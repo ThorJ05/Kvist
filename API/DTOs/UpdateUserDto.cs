@@ -2,7 +2,7 @@
 
 namespace API.DTOs;
 
-// Alle felter er valgfrie: kun de felter, der er sat, bliver ændret.
+// All fields are optinal: only the field that have been changed.
 public class UpdateUserDto
 {
     [MinLength(3), MaxLength(50)]
