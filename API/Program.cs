@@ -67,11 +67,9 @@ var app = builder.Build();
 
 app.UseCors("Allowall");
 
-if (app.Environment.IsDevelopment())
-{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 // Serverer det byggede React-projekt fra wwwroot (bruges i Docker)
 app.UseDefaultFiles();
