@@ -3,10 +3,22 @@ using System.Text;
 using Infrastructure.Daddydata;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ---------- Make sure the database folder exists ----------
+// Git doesn't keep empty folders, so after a fresh clone "dbdata" is missing and SQLite
+// can't create the file. SQLite creates files, but not folders.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
+var dataSource = new SqliteConnectionStringBuilder(connectionString).DataSource;
+if (!string.IsNullOrWhiteSpace(dataSource) && dataSource != ":memory:")
+{
+    var dbDir = Path.GetDirectoryName(Path.GetFullPath(dataSource));
+    if (!string.IsNullOrEmpty(dbDir)) Directory.CreateDirectory(dbDir);
+}
 
 // ---------- Database + Identity ----------
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -67,9 +79,8 @@ var app = builder.Build();
 
 app.UseCors("Allowall");
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // Serverer det byggede React-projekt fra wwwroot (bruges i Docker)
 app.UseDefaultFiles();
