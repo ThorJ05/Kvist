@@ -13,7 +13,7 @@ namespace API.Controllers;
 ///   SuperUser: Can CRUD users with the role "user".
 ///   Admin: can CRUD all users even admins.
 /// [Authorize(Roles = ...)] Controls what endpoints can get called.
-/// Who can they change (SuperUser can't change other SuperUsers or admins) This gets chacked in the code down below.
+/// Who can they change (SuperUser can't change other SuperUsers or admins) This gets checked in the code down below.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -29,13 +29,20 @@ public class UsersController : ControllerBase
         _userManager = userManager;
     }
 
-    // Help funtions for roles
+    // Help functions for roles
 
+    // Rank of a target user, based on the role names stored in the database.
     private static int Rank(IEnumerable<string> roles) =>
         roles.Select(r => r switch { "Admin" => 3, "SuperUser" => 2, "User" => 1, _ => 0 })
              .DefaultIfEmpty(0).Max();
 
-    private int CallerRank => Rank(User.FindAll(ClaimTypes.Role).Select(c => c.Value));
+    // Rank of the caller. IsInRole uses the same role check as [Authorize(Roles = ...)],
+    // so the attribute and this code can never disagree about who the caller is.
+    private int CallerRank =>
+        User.IsInRole("Admin") ? 3 :
+        User.IsInRole("SuperUser") ? 2 :
+        User.IsInRole("User") ? 1 : 0;
+
     private string? CallerId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     // Admins can change everything and SuperUsers can change users only.
@@ -70,7 +77,10 @@ public class UsersController : ControllerBase
     [Authorize(Roles = "SuperUser,Admin")]
     public async Task<IActionResult> Create([FromBody] CreateUserDto dto)
     {
-        if (!CanAssign(CallerRank, dto.Role))
+        // A SuperUser can only ever create plain Users, whatever the request says.
+        var role = CallerRank == 2 ? UserRole : dto.Role;
+
+        if (!CanAssign(CallerRank, role))
             return Forbidden("You are not allowed to create a user with that role.");
 
         var user = new IdentityUser { UserName = dto.Username };
@@ -78,9 +88,14 @@ public class UsersController : ControllerBase
         if (!result.Succeeded)
             return BadRequest(result.Errors.Select(e => e.Description));
 
-        await _userManager.AddToRoleAsync(user, dto.Role);
+        var roleResult = await _userManager.AddToRoleAsync(user, role);
+        if (!roleResult.Succeeded)
+        {
+            await _userManager.DeleteAsync(user);   // don't leave a user without a role
+            return BadRequest(roleResult.Errors.Select(e => e.Description));
+        }
 
-        return Created($"api/users/{user.Id}", new UserDto(user.Id, user.UserName!, new List<string> { dto.Role }));
+        return Created($"api/users/{user.Id}", new UserDto(user.Id, user.UserName!, new List<string> { role }));
     }
 
     [HttpPut("{id}")]
