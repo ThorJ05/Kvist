@@ -21,6 +21,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="dbdata\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
