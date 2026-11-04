@@ -499,3 +499,5 @@ dist/
 *.db-shm
 *.db-wal
 .env
+
+.env

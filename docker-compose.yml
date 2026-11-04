@@ -1,0 +1,17 @@
+services:
+  kvist:
+    build:
+      context: .
+      dockerfile: API/Dockerfile
+    container_name: kvist
+    restart: unless-stopped
+    ports:
+      - "8080:8080"          # host port must be in 8000-8100
+    environment:
+      Jwt__Key: ${JWT_KEY:?set JWT_KEY in .env (min 32 chars)}
+      Seed__AdminPassword: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+    volumes:
+      - kvist-data:/data
+
+volumes:
+  kvist-data:
