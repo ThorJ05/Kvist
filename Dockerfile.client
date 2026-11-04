@@ -1,0 +1,11 @@
+# Client (React + Bun). Build context must be the repository root:
+#   docker build -f Dockerfile.client -t kvist-client .
+FROM oven/bun:1
+WORKDIR /app
+COPY package.json bun.lock bunfig.toml tsconfig.json ./
+RUN bun install --frozen-lockfile
+COPY src ./src
+ENV NODE_ENV=production
+EXPOSE 3000
+USER bun
+CMD ["bun", "src/index.ts"]

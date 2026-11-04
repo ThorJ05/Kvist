@@ -1,8 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react';
 
-// Når siden serveres af selve API'et (Docker, port 8080 / 5244) bruges relative stier.
-// Under udvikling med Bun (anden port) peges der på API'et på localhost:5244.
-const API = ['5244', '8080'].includes(location.port) ? '/api' : 'http://localhost:5244/api';
+// I Docker serveres siden af client-containeren (port 8080) og API'et ligger paa port 8081 paa samme vaert.
+// Under udvikling med Bun peges der paa API'et paa localhost:5244.
+const API = location.port === '8080'
+    ? `http://${location.hostname}:8081/api`
+    : 'http://localhost:5244/api';
 
 type Role = 'User' | 'SuperUser' | 'Admin';
 
