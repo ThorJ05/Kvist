@@ -95,28 +95,55 @@ The screenshots below show the table as each role sees it.
 ## 1.2 Implementation
 
 ### Authentication method
-TODO
+
+Users log in with a username and password. The API returns a signed **JWT** that contains the user's roles and expires after 2 hours. The frontend sends it with every request, and the API validates the signature, issuer, audience and lifetime.
+
+So basically the API stays stateless, and the roles travel with the token. A wrong username and a wrong password give the same message, so an attacker can't find out which usernames exist.
+
+![Login page](docs/images/login-page.png)
+*The login page.*
+
+![Wrong password](docs/images/wrong-password.png)
+*A failed login gives a generic error message.*
 
 ### Password handling and storage
-TODO
+
+Passwords are never stored in plaintext. ASP.NET Core Identity stores only a salted hash, made with **PBKDF2 (HMAC-SHA512, 100,000 iterations)** and a random salt for each password. Passwords must have at least 8 characters, an uppercase and a lowercase letter, a digit and a symbol.
+
+PBKDF2 is built into Identity and well tested, so we don't write security-critical code ourselves. The salt means two users with the same password get different hashes.
+
+![Hashes in the database](docs/images/db-hashes.png)
+*The database contains only hashes, no readable passwords.*
+
+![Password policy](docs/images/password-policy.png)
+*A password that is too short is rejected.*
 
 ### Role-based authorization
-TODO
+
+Endpoints are protected with `[Authorize(Roles = ...)]`, and the controller also checks who the caller is trying to change. A SuperUser can only manage users with the role `User` and always creates plain `User` accounts. Nobody can delete themselves or change their own role.
+
+The rules run on the server, so they also hold for requests sent directly to the API. Hiding a button in the frontend is not security.
 
 ### Other security features
-TODO
+
+- **Account lockout:** 5 failed logins lock the account for 5 minutes, which slows down brute-force attacks.
+- **Input validation:** usernames and passwords are length-checked before they are processed.
+- **Parameterised queries:** Entity Framework Core protects against SQL injection.
+
+![Account locked](docs/images/account-locked.png)
+*After 5 failed attempts the account is locked.*
+
+**Limitations:** the JWT is stored in `localStorage` (an XSS bug could expose it), CORS and Swagger are open in development, and the platform runs over HTTP in the lab. A production setup would add HTTPS and restrict both.
 
 ### Alternatives we found along the way
-TODO
 
-### Screenshots of key functionality
-TODO
+Argon2id and bcrypt are also built in and well tested. Argon2id is memory-hard and the current OWASP first choice. |
 
-### Challenges and solutions
-TODO
 
 ### Source code
-TODO
+
+https://github.com/ThorJ05/Kvist
+
 
 ---
 
@@ -283,14 +310,5 @@ TODO
 
 ## AI disclosure
 
-We used AI assistants in this project: **Claude (Anthropic), GitHub Copilot and DeepSeek.** TODO: edit so this matches what each of us really did.
+We used AI assistants in this project: **Claude (Anthropic), GitHub Copilot and DeepSeek.** 
 
-| Area | AI tool | What it was used for | How we checked it |
-|---|---|---|---|
-| `AuthController.cs`, `UserController.cs` | TODO | Drafting parts of the code | TODO |
-| Superuser permission fix, `Program.cs` database folder fix | Claude | Finding the cause of the bug and suggesting the fix | TODO |
-| IP addressing plan and subnetting | Claude | Suggesting the VLAN split and example calculations | TODO |
-| Proxmox, Ubuntu and Docker setup | Claude | Step-by-step guidance | TODO |
-| README structure | Claude | Template and headings | TODO |
-
-**Our own work:** TODO
