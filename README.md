@@ -137,7 +137,7 @@ The rules run on the server, so they also hold for requests sent directly to the
 
 ### Alternatives we found along the way
 
-Argon2id and bcrypt are also built in and well tested. Argon2id is memory-hard and the current OWASP first choice. |
+Argon2id and bcrypt are also built in and well tested. Argon2id is memory-hard and the current OWASP first choice.
 
 
 ### Source code
@@ -149,7 +149,7 @@ https://github.com/ThorJ05/Kvist
 
 # Part 2 – CDS.infrastructure
 
-## 2.1 The company's network
+## 2.1.1 The company's network
 
 ### Device overview
 TODO
@@ -164,117 +164,39 @@ surviliance kameras : 6.
 
 
 ### Future expansion
-TODO
+The company may add employees and devices, so every network in our plan is larger than today's need. 
+For example, the phone network holds 30 devices for 12 phones, and each type of device has its own VLAN, so one group can grow without affecting the others. 
+There is also room in the 10.5.0.0/16 range for new VLANs.
 
 ---
 
-## 2.2 Development of an IP addressing plan
+## 2.2 Establishing a server on VLAN 571
 
-### Logical networks and VLANs
-TODO
+![VLAN plan](docs/images/vlan-plan.png)
+*The VLAN plan: one network per type of device.*
 
-### Private IP ranges
-TODO
+We split the company's network into seven VLANs, one for each type of device: clients, servers, printers, IP phones, cameras, guests and management. 
 
-### Subnet masks and CIDR notation
-TODO
-
-### Default gateways
-TODO
-
-### Which devices belong to each network
-TODO
-
-### Static IP addresses and DHCP
-TODO
-
-### Justification of the network segmentation
-TODO
-
-### Subnetting
-
-#### Selected networks
-TODO
-
-#### Network address, subnet mask and number of hosts
-TODO
-
-#### Why the subnet sizes are appropriate
-TODO
-
-#### Room for future expansion
-TODO
+VLAN 570 (clients, 10.5.70.0/24) and VLAN 571 (servers, 10.5.71.0/24) were given by the assignment, and we continued the same pattern for the rest (VLAN 57N uses 10.5.7N.0). 
+All networks use private 10.5.x.x addresses, and each network has its own gateway. 
+Keeping the device types apart means a problem in one network, such as an infected guest device or a compromised camera, can't spread to the servers, and the firewall can control exactly what each network may reach.
 
 ---
 
-## 2.3 Establishing a server on VLAN 571
+## 2.3 Establishing a client on VLAN 570
 
-### Virtual machine specification
-TODO
+We cloned the repository to the server and started it with Docker Compose. It runs two containers, the web application and the API, and the database is stored on a Docker volume.
 
-### Ubuntu Server installation
-TODO
+![Docker on the server](docs/images/server-docker.png)
+Docker compose ps shows both containers running, and curl gets 200 OK from the server's address, 10.5.71.61.
+The web application is published on port 8080 and the API on port 8081. 
+Both are inside the required range 8000–8100.
 
-### IP configuration
-TODO
+From the client VM on VLAN 570 we opened http://10.5.71.61:8080 in a browser and logged in as admin. 
+The platform works from the client, which shows that the firewall allows traffic from VLAN 570 to the server on VLAN 571.
 
-### Docker installation
-TODO
-
-### Deployment of the login platform
-TODO
-
-### Chosen port (8000–8100)
-TODO
-
-### Verification
-TODO
-
----
-
-## 2.4 Establishing a client on VLAN 570
-
-### Creating the virtual machine
-TODO
-
-### Network settings
-TODO
-
-### IP configuration check
-TODO
-
-### Connectivity to VLAN 571
-TODO
-
-### Accessing the login platform
-TODO
-
-### Documentation that the platform works from the client
-TODO
-
-### Firewall and communication between VLANs
-
-#### Why VLAN 570 and VLAN 571 are separate networks
-TODO
-
-#### Why communication between VLANs requires routing
-TODO
-
-#### The role of the firewall
-TODO
-
-#### Why allowing only specific ports is beneficial
-TODO
-
----
-
-## 2.5 Network design
-
-### Network diagram
-TODO
-
-### Explanation of the design
-TODO
+![Login from the client](docs/images/client-login-success.png)
+The client (VLAN 570) logged in to the platform running on the server (10.5.71.61:8080).
 
 ---
 
@@ -282,7 +204,7 @@ TODO
 
 ### Server – VLAN 571
 
-- Ubuntu Server installed: TODO
+- Ubuntu Server installed: 
 - Correct IP configuration: TODO
 - Docker installed and working: TODO
 - Login platform running in a Docker container: TODO
@@ -307,23 +229,23 @@ TODO
 ## Final reflection
 
 ### How are security and infrastructure interconnected?
-TODO it is interconnected since an applikation will never be more secure than the enviorment its running in. our applikations safety is depended on the infastructre. we seperaated our server so its not on the same network, by seperating it into diffrent VLAN´s. 
+It is interconnected since an applikation will never be more secure than the enviorment its running in. our applikations safety is depended on the infastructre. we seperaated our server so its not on the same network, by seperating it into diffrent VLAN´s. 
 
 ### What technical challenges did we encounter?
-TODO
+There weren't too many technical errors, however we did stumble upon a couple of merge conflicts, that were swiftly fixed.
 
 ### What did we learn about deploying an application on a server?
 TODO
 
 ### What would we do differently in a real company?
-TODO 
-we would have used git issues and used more branching, for better communication, workflow and less git conflicts. 
-
+We would have used git issues and used more branching, for better communication, workflow and less git conflicts. 
 
 
 ---
 
 ## AI disclosure
 
-We used AI assistants in this project: **Claude (Anthropic), GitHub Copilot and DeepSeek.** 
+We used AI assistants in this project: **Claude (Anthropic), Copilot and DeepSeek.** 
+The AI assistants were mainly used for the purpose of assisting the ReadMe structure, code optimisation and suggestions.
+The assistance of AI helped the group performe quicker and in a more structured manner. 
 
