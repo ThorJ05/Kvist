@@ -17,9 +17,8 @@ Compulsory assignment, 3rd semester, Computer Science (CDS.security & CDS.infras
     - [2.4 Establishing a client on VLAN 570](#24-establishing-a-client-on-vlan-570)
     - [2.5 Network design](#25-network-design)
     - [2.6 Testing and documentation](#26-testing-and-documentation)
-- [Part 3 – Final submission](#part-3--final-submission)
-    - [Final reflection](#final-reflection)
     - [AI disclosure](#ai-disclosure)
+    - [Final reflection](#final-reflection)
 
 ---
 
@@ -58,20 +57,20 @@ The solution is built to run in a Docker container.
 
 ### Technology choices and justification
 
-- **ASP.NET Core Web API with ASP.NET Core Identity:** Identity is a mature, widely used library that handles password hashing, account lockout and roles. 
+- **ASP.NET Core Web API with ASP.NET Core Identity:** Identity is a library that handles password hashing, account lockout and roles. 
 Using it means we don't write security-critical code ourselves.
 
 - **JWT bearer tokens:** the API is stateless, so the React frontend can call it without server-side sessions. 
-The token contains the user's roles, is signed so it can't be altered, and expires after 2 hours.
+The token containing the user's roles, is signed so it can't be altered, and expires after 2 hours.
 
-- **SQLite with Entity Framework Core:** a simple file-based database that is easy to run in Docker. 
-EF Core uses parameterised queries, which protects against SQL injection.
+- **SQLite with Entity Framework Core:** this is a file-based database that is easy to run in Docker. 
+Entity Famework Core uses parameterised queries, which protects against SQL injection.
 
 - **React (TypeScript) with Bun:** a fast development setup for a simple user interface. 
 The frontend only displays data. 
 The security rules are enforced by the API.
 
-- **Docker:** the application runs the same way on any server, which makes it easy to deploy on the virtual machine in Part 2.
+- **Docker:** the application runs the same way on any server, which makes it easy to deploy on the virtual machine in the second part of the assignment.
 
 
 
@@ -140,10 +139,6 @@ The rules run on the server, so they also hold for requests sent directly to the
 Argon2id and bcrypt are also built in and well tested. Argon2id is memory-hard and the current OWASP first choice.
 
 
-### Source code
-
-https://github.com/ThorJ05/Kvist
-
 
 ---
 
@@ -153,12 +148,19 @@ https://github.com/ThorJ05/Kvist
 
 ### Device overview
 we have 53 units on our virtual machine including: 
+
 Stationary pcs : 15.
+
 portable pcs : 10.
+
 networkprinters : 3.
+
 server : 3.
+
 ip - telephones: 12
+
 wireless acces points : 4.
+
 surviliance kameras : 6.
 
 
@@ -203,7 +205,7 @@ The client (VLAN 570) logged in to the platform running on the server (10.5.71.6
 
 ### Server – VLAN 571
 
-- Ubuntu Server installed: 
+- Ubuntu Server installed: TODO
 - Correct IP configuration: TODO
 - Docker installed and working: TODO
 - Login platform running in a Docker container: TODO
@@ -221,30 +223,36 @@ Nævn, at VM’ens netværkskort i Proxmox har VLAN-tag 570.
 ### Problems encountered and how we solved them
 TODO
 
----
-
-# Part 3 – Final submission
-
-## Final reflection
-
-### How are security and infrastructure interconnected?
-It is interconnected since an applikation will never be more secure than the enviorment its running in. our applikations safety is depended on the infastructre. we seperaated our server so its not on the same network, by seperating it into diffrent VLAN´s. 
-
-### What technical challenges did we encounter?
-There weren't too many technical errors, however we did stumble upon a couple of merge conflicts, that were swiftly fixed.
-
-### What did we learn about deploying an application on a server?
-TODO
-
-### What would we do differently in a real company?
-We would have used git issues and used more branching, for better communication, workflow and less git conflicts. 
-
 
 ---
 
 ## AI disclosure
 
-We used AI assistants in this project: **Claude (Anthropic), Copilot and DeepSeek.** 
+We used AI assistants in this project: **Claude (Anthropic), Copilot and DeepSeek.**
 The AI assistants were mainly used for the purpose of assisting the ReadMe structure, code optimisation and suggestions.
-The assistance of AI helped the group performe quicker and in a more structured manner. 
+Claude AI was used for suggestions to optimize the VLAN plan and copilot was used for suggestions of the login page. 
+We then reviewed the suggestions and possible optimizations to addapt our project.
+Claude AI was also utilized to assist the group when we stumbled upon merge conflicts or technical errors that were beyond what we understood.
+DeepSeek was used to help built understandable explinations for not only the firewall, but also the VLAN's and routing. 
+We then reviewed them and did it in our manner.
+Though AI assisted with the structure of the ReadMe, we then adjusted the structure and wrote the report.
+Screenshots, docker setup and testing was also done by us.
+The assistance of AI helped the group work through the project with less time waste and more focus on important features.
+
+
+---
+
+
+## Final reflection
+
+The security and infrastructure are interconnected since an application will never be more secure than the enviorment its running in. 
+Therefore it makes sense to utilize these two subjects for the specific project.
+Our applikations safety is depended on the infastructre. 
+We seperaated our server so its not on the same network, by seperating it into diffrent VLAN´s.
+
+There weren't too many technical errors, however we did stumble upon a couple of merge conflicts, that were swiftly fixed.
+During the process of setting up the virtual machine, the group also experienced a few database errors that we ended up using Claude AI to understand and fix.
+
+After working with virtual machines and deploying an application on a server, the group has gained more knowledge on how to setup virtual machines in the future and gained experience on what issues to focus on.
+For future projects we will use git issues and a proper branching strategy, for better communication, workflow and less git conflicts. 
 
