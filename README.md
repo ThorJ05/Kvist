@@ -149,10 +149,9 @@ https://github.com/ThorJ05/Kvist
 
 # Part 2 – CDS.infrastructure
 
-## 2.1.1 The company's network
+## 2.1 The company's network
 
 ### Device overview
-TODO
 we have 53 units on our virtual machine including: 
 Stationary pcs : 15.
 portable pcs : 10.
