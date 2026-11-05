@@ -153,6 +153,15 @@ https://github.com/ThorJ05/Kvist
 
 ### Device overview
 TODO
+we have 53 units on our virtual machine including: 
+Stationary pcs : 15.
+portable pcs : 10.
+networkprinters : 3.
+server : 3.
+ip - telephones: 12
+wireless acces points : 4.
+surviliance kameras : 6.
+
 
 ### Future expansion
 TODO
@@ -284,6 +293,9 @@ TODO
 - Correct IP configuration: TODO
 - Client can access the login platform on VLAN 571: TODO
 - Login platform's functionality can be used from the client: TODO
+- ///Skriv, hvilken IP, subnetmaske og gateway klienten har (fx 10.5.70.x/24, gateway 10.5.70.1) og om den er DHCP eller statisk.
+Vedhæft screenshot af ip a og ip route (Linux) eller ipconfig (Windows).
+Nævn, at VM’ens netværkskort i Proxmox har VLAN-tag 570.
 
 ### Problems encountered and how we solved them
 TODO
@@ -295,7 +307,7 @@ TODO
 ## Final reflection
 
 ### How are security and infrastructure interconnected?
-TODO
+TODO it is interconnected since an applikation will never be more secure than the enviorment its running in. our applikations safety is depended on the infastructre. we seperaated our server so its not on the same network, by seperating it into diffrent VLAN´s. 
 
 ### What technical challenges did we encounter?
 TODO
@@ -304,7 +316,10 @@ TODO
 TODO
 
 ### What would we do differently in a real company?
-TODO
+TODO 
+we would have used git issues and used more branching, for better communication, workflow and less git conflicts. 
+
+
 
 ---
 
