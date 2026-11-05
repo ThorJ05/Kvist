@@ -220,9 +220,6 @@ The client (VLAN 570) logged in to the platform running on the server (10.5.71.6
 Vedhæft screenshot af ip a og ip route (Linux) eller ipconfig (Windows).
 Nævn, at VM’ens netværkskort i Proxmox har VLAN-tag 570.
 
-### Problems encountered and how we solved them
-TODO
-
 
 ---
 
