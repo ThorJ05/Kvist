@@ -205,23 +205,39 @@ The client (VLAN 570) logged in to the platform running on the server (10.5.71.6
 
 ### Server – VLAN 571
 
-- Ubuntu Server installed: TODO
-- Correct IP configuration: TODO
-- Docker installed and working: TODO
-- Login platform running in a Docker container: TODO
-- Login platform accessible through the selected port: TODO
+- Ubuntu Server installed: Yes, Ubutu Server 26.04.1 LTS
+- Correct IP configuration: Yes, 10.5.71.61/24 on the ens18, the gateway is 10.5.71.5
+- Docker installed and working: Yes, Docker and Docker compose version 2.40.3 are installed and up and running
+- Login platform running in a Docker container: Yes, kvist-backend and kvist-client are up and running with docker compose ps
+- Login platform accessible through the selected port: Yes, the web page are on the port 8080 and the API on port 8081
+  curl -I http://10.5.71.61:8080 it returns 200 ok
+
+
+  ![Server IP configuration](docs/images/server-ip.png)
+*The server has 10.5.71.61/24 on ens18 and the gateway 10.5.71.5.*
 
 ### Client – VLAN 570
 
-- Correct IP configuration: TODO
-- Client can access the login platform on VLAN 571: TODO
-- Login platform's functionality can be used from the client: TODO
-- ///Skriv, hvilken IP, subnetmaske og gateway klienten har (fx 10.5.70.x/24, gateway 10.5.70.1) og om den er DHCP eller statisk.
-Vedhæft screenshot af ip a og ip route (Linux) eller ipconfig (Windows).
-Nævn, at VM’ens netværkskort i Proxmox har VLAN-tag 570.
+- Correct IP configuration: Yes, 10.5.70.119/24 on ens18, on gateway 10.5.70.5, static. The VLAN had no DHCP lease for us(not sure why)
+- Client can access the login platform on VLAN 571: Yes, across the VLANs: from the client on VLAN 570 we opened http://10.5.71.61:8080
+- Login platform's functionality can be used from the client: Yes, we logged in as admin from the client and the user table works fine and danty
 
+### Problems we en countered and how solved them
 
----
+- Unknown gateway for VLAN 570: ipconfig showed only the Wi-Fi network We pinged 10.5.70.5 and 10.5.71.5, and both
+  answered, so we used 10.5.70.5.
+- Server reached nothing on VLAN 571: it was on vmbr0 with tag 571, but the lab uses a seperate bridge. we changed it to
+  VLAN571 without a tag and got 10.5.71.61 from DHCP.
+- Server network link down after restart: a reboot did not recreate the virtual network card. We stopped and stated the
+  VM in ProxMox
+- Docker compose missing on the server: We installed it with sudo apt install -y docker-compose-v2.
+- Clent got no IP addresses on VLAN 570: Tag 570 gave no DHCP lease. We removed the tag and set a static adress with nmcli.
+- Login failed from another machine: The fronted called localhost:5244. We changed the API adresses in src/App.tsx to port
+  8081 of the same host.
+- git push rejected: a grupe member had pushed first. We ran git pull --rebase and pushed again.
+
+### IP addressing plan
+![IP addressing plan.png](docs/images/IP%20addressing%20plan.png)
 
 ## AI disclosure
 
@@ -233,8 +249,11 @@ Claude AI was also utilized to assist the group when we stumbled upon merge conf
 DeepSeek was used to help built understandable explinations for not only the firewall, but also the VLAN's and routing. 
 We then reviewed them and did it in our manner.
 Though AI assisted with the structure of the ReadMe, we then adjusted the structure and wrote the report.
-Screenshots, docker setup and testing was also done by us.
 The assistance of AI helped the group work through the project with less time waste and more focus on important features.
+IP addressing plan table
+Claude (Anthropic) wrote the Dockerfiles, the Docker Compose file and the changeof the API address in the frontend, 
+helped us troubleshoot the virtual machinenetwork, and helped draft parts of the infrastructure documentation. We took the
+screenshots, tested everything on our own virtual machines, and checked and adjusted the text.
 
 
 ---
