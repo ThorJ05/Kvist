@@ -15,7 +15,6 @@ Compulsory assignment, 3rd semester, Computer Science (CDS.security & CDS.infras
     - [2.2 Development of an IP addressing plan](#22-development-of-an-ip-addressing-plan)
     - [2.3 Establishing a server on VLAN 571](#23-establishing-a-server-on-vlan-571)
     - [2.4 Establishing a client on VLAN 570](#24-establishing-a-client-on-vlan-570)
-    - [2.5 Network design](#25-network-design)
     - [2.6 Testing and documentation](#26-testing-and-documentation)
     - [AI disclosure](#ai-disclosure)
     - [Final reflection](#final-reflection)
@@ -173,8 +172,8 @@ There is also room in the 10.5.0.0/16 range for new VLANs.
 
 ## 2.2 Establishing a server on VLAN 571
 
-![VLAN plan](docs/images/vlan-plan.png)
-*The VLAN plan: one network per type of device.*
+![IP addressing plan](docs/images/ip-addressing-plan.png)
+*The IP addressing plan: one network per type of device.*
 
 We split the company's network into seven VLANs, one for each type of device: clients, servers, printers, IP phones, cameras, guests and management. 
 
@@ -182,7 +181,26 @@ VLAN 570 (clients, 10.5.70.0/24) and VLAN 571 (servers, 10.5.71.0/24) were given
 All networks use private 10.5.x.x addresses, and each network has its own gateway. 
 Keeping the device types apart means a problem in one network, such as an infected guest device or a compromised camera, can't spread to the servers, and the firewall can control exactly what each network may reach.
 
----
+
+### Subnetting
+
+#### Selected networks
+
+VLAN 575 (IP phones) and VLAN 573 (cameras).
+
+#### Network address, subnet mask and number of hosts
+
+![Subnetting](docs/images/subnetting.png)
+
+*Subnet calculations for VLAN 575 (phones) and VLAN 573 (cameras).*
+
+Usable hosts are 2 to the power of the host bits, minus 2 (the network and broadcast addresses).
+
+- **Phones:** 12 phones plus the gateway use 13 of 30 addresses. A /28 (14 hosts) would be almost full.
+- **Cameras:** 6 cameras plus the gateway use 7 of 14 addresses. A /29 (6 hosts) would be too small, because the gateway needs an address too, and a /24 would waste over 240 addresses on a small network.
+
+The phone network can grow to 29 devices and the camera network to 13 without changes. If a network fills up, it can be widened (for example from /28 to /27) without affecting other VLANs, because every VLAN has its own address block.
+
 
 ## 2.3 Establishing a client on VLAN 570
 
@@ -266,7 +284,9 @@ Therefore it makes sense to utilize these two subjects for the specific project.
 Our applikations safety is depended on the infastructre. 
 We seperaated our server so its not on the same network, by seperating it into diffrent VLAN´s.
 
-There weren't too many technical errors, however we did stumble upon a couple of merge conflicts, that were swiftly fixed.
+There were a couple of unexpected technical errors, but also some expected merge conflicts, that were swiftly fixed.
+Most of the unexpected technical errors happened while working on our vlan's, which was motly due to the groups lack of experience on the topic. 
+However these errors were solved by assistance from teachers and other classmates.
 During the process of setting up the virtual machine, the group also experienced a few database errors that we ended up using Claude AI to understand and fix.
 
 After working with virtual machines and deploying an application on a server, the group has gained more knowledge on how to setup virtual machines in the future and gained experience on what issues to focus on.
